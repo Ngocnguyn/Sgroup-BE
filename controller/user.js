@@ -22,7 +22,7 @@ exports.postAddUser = (req, res, next) => {
   const newUser = req.body;
   return db.query(
     "insert into user (fullname,gender,age) Values (?,?,?)",
-    [newUser.fullname, newUser.gander, newUser.age],
+    [newUser.fullname, newUser.gender, newUser.age],
     (err, result) => {
         if(err){
             return res.status(500).json({messenger: err});
@@ -46,7 +46,7 @@ exports.putUpdateUser = (req, res, next) => {
   const newUser = req.body;
   return db.query(
     "update user set fullname = ?, gender = ?, age = ? where id = ?",
-    [newUser.fullname, newUser.gander, newUser.age],
+    [newUser.fullname, newUser.gender, newUser.age],
     (err, result) => {
         if(err){
             return res.status(500).json({messenger: err});
