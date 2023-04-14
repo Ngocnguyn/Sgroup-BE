@@ -1,5 +1,5 @@
 const express = require('express');
-
+const userValidate = require('../middlewares/userValidate');
 const router = express.Router();
 
 let users = [
@@ -30,7 +30,7 @@ router.get('/:id', (req, res) => {
     res.json(user);
 });
 
-router.post('/', (req, res) => {
+router.post('/',userValidate, (req, res) => {
     const user = {
         id: users.length + 1,
         fullname: req.body.fullname,
@@ -50,7 +50,7 @@ router.delete('/:id', (req, res) => {
     users = users.filter(user => user.id !== parseInt(id));
     res.json(user);
 });
-router.put('/:id', (req, res) => {
+router.put('/:id',userValidate, (req, res) => {
     const id = req.params.id;
     const user = users.find(user => user.id === parseInt(id));
     if (!user) {
