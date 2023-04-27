@@ -1,11 +1,15 @@
 const db = require("./connection");
 
 db.query(  `
-CREATE TABLE IF NOT EXISTS user (
+CREATE TABLE users (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  fullname VARCHAR(255) NOT NULL,
+  username VARCHAR(255) NOT NULL unique,
+  password VARCHAR(255) NOT NULL,
+  salt varchar(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  age INT unsigned NOT NULL,
   gender BOOLEAN NOT NULL,
-  age INT NOT NULL
+  email VARCHAR(255) NOT NULL
 )
   `,(err,result) => {
     if (err) {

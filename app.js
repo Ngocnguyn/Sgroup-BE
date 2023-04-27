@@ -1,12 +1,10 @@
-const express = require('express');
+import 'dotenv/config';
+import routers from './api/index.js';
+import express from 'express';
 const app = express();
-const db = require("./database/connection");
-const usersRouter = require('./router/usersRouter');
-const userValidate = require('./middlewares/userValidate');
 
 app.use(express.json());
-app.use('/users', usersRouter);
-
+app.use('/',routers);
 const port = 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
