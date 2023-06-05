@@ -15,7 +15,7 @@ class UserController {
         const users = await UserService.searchUsers(offset, pageSize, search);
         return res.status(200).json(users);
     };
-    getUserByID = async (req, res, next) => {
+    getUserById = async (req, res, next) => {
         const user = await UserService.getById(req.params.id);
         if (user == null) {
             return res.status(404).json({ message: "User does not exist." });
@@ -24,10 +24,9 @@ class UserController {
     };
     createNewUser = async (req, res, next) => {
         let newUser = {
-            fullname: req.body.fullname,
-            gender: req.body.gender,
+            name: req.body.name,
             age: req.body.age,
-            password: req.body.password
+            gender: req.body.gender
         };
         await UserService.create(newUser);
         return res.status(201).json(newUser);
@@ -41,10 +40,9 @@ class UserController {
 
         user = {
             ...user,
-            fullname: req.body.fullname,
+            name: req.body.name,
             gender: req.body.gender,
             age: req.body.age,
-            password: req.body.password
         };
 
         try {
@@ -55,7 +53,6 @@ class UserController {
 
         return res.status(204).json();
     }
-
     removeUser = async (req, res, next) => {
         const user = await UserService.getById(req.params.id);
         if (user == null) {
