@@ -6,13 +6,13 @@ class UserService {
     return users;
   }
   async searchUsers(offset, pageSize, search) {
-    const users = await knex("USERS")
-        .select("*")
-        .limit(pageSize)
-        .offset(offset)
-        .where("name", "like", `%${search}%`);
+    const users = await connection('users')
+      .select('*')
+      .where('name', 'like', `%${search}%`)
+      .limit(pageSize)
+      .offset(offset);
     return users;
-  }
+  }  
   async getById(id) {
     const user = await connection.select().from('users').where('ID', id).first();
     return user;
