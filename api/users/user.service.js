@@ -1,38 +1,45 @@
 import connection from "../../database/connection.js";
 
 class UserService {
-  async getAll() {
-    const users = await connection.select().from('users');
+  async getAll(offset, pageSize) {
+    const users = await knex("USERS")
+        .select("*")
+        .limit(pageSize)
+        .offset(offset);
     return users;
   }
-  async getUserWithPaging(page, size, username) {
-    const users = await connection.select().where('USERNAME', 'like', `%${username ?? ''}%`).from('users').limit(size).offset((page - 1) * size);
-    return users;
-  } 
   async getById(id) {
-    const user = await connection.select().from('users').where('ID', id).first();
+    const user = await knex("USERS").select("*").where("id", id).first();
     return user;
   }
-
+  async searchUsers(offset, pageSize, search) {
+    const users = await knex("USERS")
+        .select("*")
+        .limit(pageSize)
+        .offset(offset)
+        .where("name", "like", `%${search}%`);
+    return users;
+  }
   async create(user) {
-    const id = await connection('users').insert(
-        { NAME: user.fullname, AGE: user.age, GENDER: user.gender, PASSWORD: user.password }
-    ).returning(['ID'])
-    user.id = id[0];
+    await knex("USERS").insert({
+        name: user.name,
+        age: user.age,
+        gender: user.gender,
+    });
+    const [record] = await knex.raw("SELECT LAST_INSERT_ID() AS id");
+    user.id = record[0].id;
     return user;
   }
 
   async update(id, user) {
-    await connection('users').where('id', id).update({
-      GENDER: user.gender,
-      FULLNAME: user.fullname,
-      AGE: user.age,
-      PASSWORD: user.password
+    await knex("USERS").where("id", id).update({
+        name: user.name,
+        age: user.age,
+        gender: user.gender,
     });
   }
-
   async removeById(id) {
-    await connection('users').where('ID', id).del();
+    await knex("USERS").where("id", id).del();
   }
 }
 
