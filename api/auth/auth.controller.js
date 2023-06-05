@@ -35,5 +35,28 @@ class AuthController{
             }
         );
     }
+    async requestForgetPassword (req, res, next) {
+        const {email} = req.body;
+        const user = await AuthService.getByEmail(email);
+        if(!user){
+            return res.status(401).json(
+                {
+                    message: 'User does not exist'
+                }
+            )
+        }
+        const forgetPasswordToken = await AuthService.generateForgetPasswordToken(user.id);
+        await AuthService.sendForgetPasswordMail(user, forgetPasswordToken);
+        return res.status(200).json({
+            message: 'Please check your mail to get token'
+        })
+    }
+    async resetPassword(req, res, next){
+        const {token, password} = req.body;
+        await AuthService.resetPassword(token, password);
+        return res.status(200).json({
+            message: 'Password reset successfully'
+        });
+    }   
 }
 export default new AuthController();

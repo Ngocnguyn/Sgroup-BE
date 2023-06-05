@@ -1,11 +1,9 @@
 const excuteQuery = ({db, query, params}) => {
     return new Promise((resolve, reject) => {
         db.query(query, params, (err, rows) => {
-            console.log(err)
             if (err) {
                 reject(err);
             } else {  
-                console.log(rows);
                 resolve(rows);
             }
         });

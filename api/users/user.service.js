@@ -1,25 +1,39 @@
 import connection from "../../database/connection.js";
-class UserService{
-    async getAll(){
-        const user = await connection.query('SELECT * FROM users');
-        return user;
-    }
-    async getById(id){
-        const user = await connection.query('SELECT * FROM users WHERE id = ?', [id]);
-        return user;
-    }
-    async create(user){
-        await connection.query('INSERT INTO USERS(GENDER, FULLNAME, AGE, PASSWORD) VALUES(?, ?, ?, ?);', [user.gender, user.fullname, user.age, user.password]);
-        const [record] = await connection.query('SELECT LAST_INSERT_ID() AS ID;');
-        user.id = record[0].ID;
-        return user;
-    }
-    async update(id, user) {
-        await connection.query('UPDATE USERS SET GENDER = ?, FULLNAME = ?, AGE = ?, PASSWORD = ? WHERE ID = ?', [user.gender, user.fullname, user.age, user.password, id]);
-    }
 
-    async removeById(id) {
-        await connection.query('DELETE FROM USERS WHERE ID = ?', [id]);
-    }
+class UserService {
+  async getAll() {
+    const users = await connection.select().from('users');
+    return users;
+  }
+  async getUserWithPaging(page, size, username) {
+    const users = await connection.select().where('USERNAME', 'like', `%${username ?? ''}%`).from('users').limit(size).offset((page - 1) * size);
+    return users;
+  } 
+  async getById(id) {
+    const user = await connection.select().from('users').where('ID', id).first();
+    return user;
+  }
+
+  async create(user) {
+    const id = await connection('users').insert(
+        { NAME: user.fullname, AGE: user.age, GENDER: user.gender, PASSWORD: user.password }
+    ).returning(['ID'])
+    user.id = id[0];
+    return user;
+  }
+
+  async update(id, user) {
+    await connection('users').where('id', id).update({
+      GENDER: user.gender,
+      FULLNAME: user.fullname,
+      AGE: user.age,
+      PASSWORD: user.password
+    });
+  }
+
+  async removeById(id) {
+    await connection('users').where('ID', id).del();
+  }
 }
+
 export default new UserService();

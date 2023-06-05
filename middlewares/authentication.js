@@ -9,7 +9,7 @@ const authenticationToken = (req, res, next) => {
       message: "No token provided.",
     });
   } 
-  // Neu ma kiem tra token khong hop le thi tra ve loi
+  // Neu ma kiem tra token khong hop le thi tra ve loi 
   else {
     try {
       const claims = jsonwebtoken.verify(token, process.env.JWT_SECRET);
